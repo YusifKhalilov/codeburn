@@ -1,0 +1,31 @@
+name: CodeBurnMenubar
+options:
+  bundleIdPrefix: com.codeburn
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.7"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGNING_REQUIRED: "NO"
+    ENABLE_HARDENED_RUNTIME: "NO"
+
+targets:
+  CodeBurnMenubar:
+    type: application
+    platform: macOS
+    sources:
+      - Sources/CodeBurnMenubar
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.codeburn.menubar
+        PRODUCT_NAME: CodeBurnMenubar
+        INFOPLIST_FILE: Sources/CodeBurnMenubar/Info.plist
+        SWIFT_VERSION: "5.7"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+        ENABLE_HARDENED_RUNTIME: "NO"
+        CODE_SIGN_IDENTITY: "-"

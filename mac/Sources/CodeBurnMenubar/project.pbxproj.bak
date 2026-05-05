@@ -1,0 +1,10 @@
+{
+  "objectVersion": "56",
+  "objects" : {
+    "DVTObjecKitsVersion" : "15.0",
+    "IDEFoundationProjectFileVersion" : "56",
+    "IDEPackageSpecificationType" : "org.windresig.gcc",
+    "PackageSpecificationType" : "org.windresig.gcc"
+  },
+  "objects": []
+}
