@@ -1,54 +1,32 @@
-# CodeBurn Menubar (macOS)
+# CodeBurn for macOS 13
 
-Native Swift + SwiftUI menubar app. The codeburn menubar surface.
+Fork of [getagentseal/codeburn](https://github.com/getagentseal/codeburn) — compiles and runs on **macOS 13 (Ventura)**.
 
-## Requirements
+## Difference from Original
 
-- macOS 14+ (Sonoma) - Swift 6.0+ toolchain
-- **OR** macOS 13+ (Ventura) - Swift 5.7+ toolchain (see [Build for macOS 13](#build-for-macos-13))
-- `codeburn` CLI installed globally (`npm install -g codeburn`) or available at a path you pass via `CODEBURN_BIN`
+- Original requires macOS 14+ (Swift 6)
+- This version: macOS 13+ (Swift 5.7 compatible)
 
-## Install (end users)
+## Install
 
-One command:
+### CLI (any macOS)
 
 ```bash
-npx codeburn menubar
+npm install -g codeburn
 ```
 
-That's it. The command downloads the latest `.app` from GitHub Releases, drops it into `~/Applications`, clears Gatekeeper quarantine, and launches it. Re-running it upgrades in place with `--force`, or just launches the existing copy otherwise.
-
-If you already have the CLI installed globally (`npm install -g codeburn`), `codeburn menubar` works the same way.
-
-### Build from source
-
-For contributors running a local build instead of the packaged release:
+### Menubar App (macOS 13)
 
 ```bash
-npm install -g codeburn                       # CLI the app shells out to for data
-git clone https://github.com/getagentseal/codeburn.git
-cd codeburn/mac
-swift build -c release
-.build/release/CodeBurnMenubar                # launch
-```
-
-### Build for macOS 13
-
-If you're on macOS 13 (Ventura) and cannot run the official release (requires macOS 14+), build from source:
-
-```bash
-git clone https://github.com/getagentseal/codeburn.git
+git clone https://github.com/YusifKhalilov/codeburn.git
 cd codeburn/mac
 
-# Build the menubar app
+# Build
 SDK=$(xcrun --sdk macosx --show-sdk-path)
-swiftc -module-name CodeBurnMenubar \
-  -target x86_64-apple-macosx13.0 \
-  -sdk "$SDK" \
-  -framework AppKit -framework SwiftUI -framework Combine \
-  -disable-autolinking-runtime-compatibility-concurrency \
-  -O -o CodeBurnMenubar \
-  $(find Sources -name "*.swift" | sort | tr '\n' ' ')
+swiftc -module-name CodeBurnMenubar -target x86_64-apple-macosx13.0 \
+  -sdk "$SDK" -framework AppKit -framework SwiftUI -framework Combine \
+  -disable-autolinking-runtime-compatibility-concurrency -O \
+  -o CodeBurnMenubar $(find Sources -name "*.swift" | sort | tr '\n' ' ')
 
 # Create app bundle
 mkdir -p CodeBurn.app/Contents/{MacOS,Resources}
@@ -56,62 +34,11 @@ cp CodeBurnMenubar CodeBurn.app/Contents/MacOS/
 cp Sources/CodeBurnMenubar/Info.plist CodeBurn.app/Contents/Info.plist
 touch CodeBurn.app/Contents/Resources/.gitkeep
 
-# Install to ~/Applications
+# Install
 cp -R CodeBurn.app ~/Applications/
 open ~/Applications/CodeBurn.app
 ```
 
-## Build & run (dev against a local CLI checkout)
+## Original Repo
 
-```bash
-cd mac
-swift build
-# Point the app at your dev CLI build instead of the globally installed `codeburn`:
-npm --prefix .. run build
-CODEBURN_BIN="node $(pwd)/../dist/cli.js" swift run
-```
-
-The app registers itself as a menubar accessory (`LSUIElement = true` at runtime). No Dock icon.
-
-## Data source
-
-On launch and every 60 seconds thereafter, the app spawns `codeburn status --format menubar-json --no-optimize` directly (argv, no shell) via `CodeburnCLI.makeProcess` and decodes the JSON into `MenubarPayload`. The manual refresh button in the footer invokes the same command without `--no-optimize`, which includes optimize findings but takes longer.
-
-Override the binary via the `CODEBURN_BIN` environment variable (default: `codeburn` on PATH). The value is validated against a strict allowlist (alphanumerics plus `._/-` space) before use, so a malicious env var can't inject shell commands.
-
-## Project layout
-
-```
-mac/
-├── Package.swift                     SwiftPM manifest
-├── Sources/CodeBurnMenubar/
-│   ├── CodeBurnApp.swift             @main + MenuBarExtra scene
-│   ├── AppStore.swift                @Observable store + enums
-│   ├── Data/MenubarPayload.swift     Codable payload types + placeholder
-│   ├── Theme/Theme.swift             Design tokens (warm terracotta palette)
-│   └── Views/MenuBarContent.swift    Popover layout + footer action bar
-└── README.md                         This file
-```
-
-## Status
-
-Live data wired. Next iterations:
-
-1. FSEvents watch for `~/.claude/projects/` changes (debounced refresh on real edits)
-2. Persistent disk cache for optimize findings so the default refresh can include them without the 30-second penalty
-3. Currency metadata in the JSON payload + Swift-side formatting
-4. Sparkle auto-update
-5. DMG packaging + Homebrew Cask tap
-
-## Design tokens
-
-Sourced from `~/codeburn-menubar-mac-swiftui.html`. Warm terracotta-ember palette:
-
-- Accent (light): `#C9521D`
-- Accent (dark): `#E8774A`
-- Ember deep: `#8B3E13`
-- Ember glow: `#F0A070`
-- Surface (light): `#FAF7F3`
-- Surface (dark): `#1C1816`
-
-SF Mono for currency values; SF Pro Rounded for hero.
+https://github.com/getagentseal/codeburn
